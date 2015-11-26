@@ -1,0 +1,3 @@
+Provides access to symbolic mathematical operations in C#.
+Base set includes addition, division, multiplication and square root.
+Provides a way how to simplify mathematical expressions without actually evaluating those expressions.
