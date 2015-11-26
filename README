@@ -1,3 +1,4 @@
-Provides access to symbolic mathematical operations in C#.
+Provides access to symbolic mathematical operations in C# (portable class library).
 Base set includes addition, division, multiplication and square root.
 Provides a way how to simplify mathematical expressions without actually evaluating those expressions.
+Can choose either long or BigInteger as background storage for numbers.
