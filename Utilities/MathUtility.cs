@@ -140,5 +140,28 @@ namespace Barbar.SymbolicMath.Utilities
             }
             return phi;
         }
+
+        /// <summary>
+        /// Naive primality test
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static bool IsPrime(long n)
+        {
+            if (n < 2)
+                return false;
+            if (n < 4)
+                return true;
+            if ((n & 1) == 0 || n % 3 == 0)
+                return false;
+            long i = 5;
+            while (i * i <= n)
+            {
+                if (n % i == 0 || n % (i + 2) == 0)
+                    return false;
+                i = i + 6;
+            }
+            return true;
+        }
     }
 }
