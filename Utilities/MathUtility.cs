@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Barbar.SymbolicMath.Utilities
 {
@@ -162,6 +163,74 @@ namespace Barbar.SymbolicMath.Utilities
                 i = i + 6;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Computes partition function
+        /// </summary>
+        /// <param name="stop"></param>
+        /// <returns></returns>
+        public static long Partition(int stop)
+        {
+            var p = new List<int> { 1 };
+
+            int n = 1;
+            while (true)
+            {
+                int i = 0;
+                int penta = 1;
+                p.Add(0);
+
+                while (penta <= n)
+                {
+                    int sign = (i % 4 > 1) ? -1 : 1;
+                    p[n] += sign * p[n - penta];
+                    i++;
+
+                    int j = (i % 2 == 0) ? i / 2 + 1 : -(i / 2 + 1);
+                    penta = j * (3 * j - 1) / 2;
+                }
+
+                if (n == stop)
+                {
+                    return p[n];
+                }
+
+                n++;
+            }
+        }
+
+        /// <summary>
+        /// Calculates square root of big integer
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static BigInteger Sqrt(BigInteger n)
+        {
+            if (n == 0) return 0;
+            if (n > 0)
+            {
+                int bitLength = Convert.ToInt32(Math.Ceiling(BigInteger.Log(n, 2)));
+                var root = BigInteger.One << (bitLength / 2);
+
+                while (!IsSqrt(n, root))
+                {
+                    root += n / root;
+                    root /= 2;
+                }
+
+                return root;
+            }
+
+            throw new ArithmeticException("NaN");
+        }
+
+        private static bool IsSqrt(BigInteger n, BigInteger root)
+        {
+            var lowerBound = root * root;
+            var upperBound = (root + 1) * (root + 1);
+
+            return n >= lowerBound && n < upperBound;
         }
     }
 }
