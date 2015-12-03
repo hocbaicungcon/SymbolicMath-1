@@ -45,7 +45,10 @@
     <Compile Include="ITermFactory.cs" />
     <Compile Include="Minus.cs" />
     <Compile Include="Multiply.cs" />
+    <Compile Include="Policies\Int64Policy.cs" />
+    <Compile Include="Policies\IPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rationals\Rational.cs" />
     <Compile Include="SquareRoot.cs" />
     <Compile Include="SymMathNode.cs" />
     <Compile Include="Term.cs" />

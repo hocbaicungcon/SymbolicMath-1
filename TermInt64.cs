@@ -1,4 +1,5 @@
-﻿using Barbar.SymbolicMath.Utilities;
+﻿using Barbar.SymbolicMath.Policies;
+using Barbar.SymbolicMath.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -92,7 +93,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override Term Gcd(Term other)
         {
-            return new TermInt64(MathUtility.Gcd(m_Value, Evaluate(other)));
+            return new TermInt64(Int64Policy.Instance.Gcd(m_Value, Evaluate(other)));
         }
 
         /// <summary>

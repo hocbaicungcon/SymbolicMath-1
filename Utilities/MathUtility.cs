@@ -11,54 +11,6 @@ namespace Barbar.SymbolicMath.Utilities
     public static class MathUtility
     {
         /// <summary>
-        /// Calculates greatest common divisor
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static long Gcd(long a, long b)
-        {
-            if (a <= 0)
-            {
-                throw new ArgumentOutOfRangeException("a");
-            }
-            if (b <= 0)
-            {
-                throw new ArgumentOutOfRangeException("b");
-            }
-
-            int d = 0;
-            while (((a & 1) == 0) && ((b & 1) == 0))
-            {
-                a = a >> 1;
-                b = b >> 1;
-                d++;
-            }
-            while (a != b)
-            {
-                if ((a & 1) == 0)
-                {
-                    a = a >> 1;
-                    continue;
-                }
-                if ((b & 1) == 0)
-                {
-                    b = b >> 1;
-                    continue;
-                }
-                if (a > b)
-                {
-                    a = (a - b) >> 1;
-                }
-                else
-                {
-                    b = (b - a) >> 1;
-                }
-            }
-            return (1 << d) * a;
-        }
-
-        /// <summary>
         /// Gets factors of square root of number, expressed 
         /// as continued fraction. Stops after recurring period is reached.
         /// For example 2 yields { 1,2 }, 3 yields { 1, 1, 2 }, etc.
@@ -231,6 +183,37 @@ namespace Barbar.SymbolicMath.Utilities
             var upperBound = (root + 1) * (root + 1);
 
             return n >= lowerBound && n < upperBound;
+        }
+
+        public static void GetPermutations<T>(T[] list, ICollection<T[]> perms)
+        {
+            int x = list.Length - 1;
+            GetPermutations(list, 0, x, perms);
+        }
+
+        private static void GetPermutations<T>(T[] list, int k, int m, ICollection<T[]> perms)
+        {
+            if (k == m)
+            {
+                perms.Add((T[])list.Clone());
+                return;
+            }
+            for (int i = k; i <= m; i++)
+            {
+                Swap(ref list[k], ref list[i]);
+                GetPermutations(list, k + 1, m, perms);
+                Swap(ref list[k], ref list[i]);
+            }
+        }
+
+        private static void Swap<T>(ref T a, ref T b)
+        {
+            if (!EqualityComparer<T>.Default.Equals(a, b))
+            {
+                T xchg = a;
+                a = b;
+                b = xchg;
+            }
         }
     }
 }
