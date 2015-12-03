@@ -3,21 +3,50 @@ using System;
 
 namespace Barbar.SymbolicMath.Rationals
 {
+    /// <summary>
+    /// Represent rational number in form of fraction
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TPolicy"></typeparam>
     public struct Rational<T,TPolicy> where TPolicy : IPolicy<T>, new()
     {
-        private T n;
-        private T d;
+        private T m_Numerator;
+        private T m_Denominator;
         private static readonly TPolicy Policy = new TPolicy();
 
-        public T Numerator { get { return n; } }
-        public T Denominator { get { return d; } }
+        /// <summary>
+        /// Numerator
+        /// </summary>
+        public T Numerator { get { return m_Numerator; } }
+        /// <summary>
+        /// Denominator
+        /// </summary>
+        public T Denominator { get { return m_Denominator; } }
 
+        /// <summary>
+        /// ctor, denominator will be set to one
+        /// </summary>
+        /// <param name="numerator"></param>
+        public Rational(T numerator) : this(numerator, Policy.One())
+        {
+        }
+        
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
         public Rational(T numerator, T denominator)
         {
-            this.n = numerator;
-            this.d = denominator;
+            m_Numerator = numerator;
+            m_Denominator = denominator;
         }
 
+
+        /// <summary>
+        /// Convert fraction to string
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if (Policy.IsOne(Denominator))
@@ -27,6 +56,12 @@ namespace Barbar.SymbolicMath.Rationals
             return string.Format("{0}/{1}", Numerator, Denominator);
         }
 
+        /// <summary>
+        /// Normalize according to folowing rules
+        ///   a) if there is a minus sign it will remain only in numerator
+        ///   b) if there is common divisor, both numerator and denominator are divided by this common divisor
+        /// </summary>
+        /// <returns></returns>
         public Rational<T, TPolicy> Normalize()
         {
             if (Policy.IsOne(Denominator))
@@ -56,11 +91,23 @@ namespace Barbar.SymbolicMath.Rationals
             return new Rational<T, TPolicy>(n, d);
         }
 
+        /// <summary>
+        /// Multiply and normalize
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Rational<T, TPolicy> operator *(Rational<T, TPolicy> a, Rational<T, TPolicy> b)
         {
             return new Rational<T, TPolicy>(Policy.Mul(a.Numerator, b.Numerator), Policy.Mul(a.Denominator, b.Denominator)).Normalize();
         }
 
+        /// <summary>
+        /// Add and normalize
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Rational<T, TPolicy> operator +(Rational<T, TPolicy> a, Rational<T, TPolicy> b)
         {
             if (Policy.IsZero(a.Numerator))
@@ -79,6 +126,12 @@ namespace Barbar.SymbolicMath.Rationals
             return new Rational<T, TPolicy>(Policy.Add(an, bn), d).Normalize();
         }
 
+        /// <summary>
+        /// Subtract and normalize
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Rational<T, TPolicy> operator -(Rational<T, TPolicy> a, Rational<T, TPolicy> b)
         {
             if (Policy.IsZero(a.Numerator))
@@ -97,6 +150,12 @@ namespace Barbar.SymbolicMath.Rationals
             return new Rational<T, TPolicy>(Policy.Sub(an, bn), d).Normalize();
         }
 
+        /// <summary>
+        /// Divide and normalize. Division by zero will throw an exception
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static Rational<T, TPolicy> operator /(Rational<T, TPolicy> a, Rational<T, TPolicy> b)
         {
             if (Policy.IsZero(a.Numerator))
