@@ -132,5 +132,37 @@ namespace Barbar.SymbolicMath.Policies
         {
             return 0L;
         }
+
+        public long Sqrt(long n)
+        {
+            return (int)Math.Sqrt(n);
+        }
+
+        /*BIGINT below:
+            if (n == 0) return 0;
+            if (n > 0)
+            {
+                int bitLength = Convert.ToInt32(Math.Ceiling(Math.Log(n, 2)));
+                var root = 1L << (bitLength / 2);
+
+                while (!IsSqrt(n, root))
+                {
+                    root += n / root;
+                    root /= 2;
+                }
+
+                return root;
+            }
+
+            throw new ArithmeticException("NaN");
+        }
+
+        private static bool IsSqrt(long n, long root)
+        {
+            var lowerBound = root * root;
+            var upperBound = (root + 1) * (root + 1);
+
+            return n >= lowerBound && n < upperBound;
+        }*/
     }
 }

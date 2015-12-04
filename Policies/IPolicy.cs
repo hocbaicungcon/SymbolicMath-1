@@ -78,8 +78,22 @@
         /// <param name="b"></param>
         /// <returns></returns>
         T Sub(T a, T b);
-
+        /// <summary>
+        /// Return one
+        /// </summary>
+        /// <returns></returns>
         T One();
+        /// <summary>
+        /// Return zero
+        /// </summary>
+        /// <returns></returns>
         T Zero();
+
+        /// <summary>
+        /// Calculates square root
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        T Sqrt(T n);
     }
 }
