@@ -45,6 +45,9 @@
     <Compile Include="ITermFactory.cs" />
     <Compile Include="Minus.cs" />
     <Compile Include="Multiply.cs" />
+    <Compile Include="Parser\Associativity.cs" />
+    <Compile Include="Parser\Operation.cs" />
+    <Compile Include="Parser\Parser.cs" />
     <Compile Include="Policies\Int64Policy.cs" />
     <Compile Include="Policies\IPolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
