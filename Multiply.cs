@@ -115,7 +115,7 @@
         /// <returns></returns>
         public override double Evaluate()
         {
-            return A.Evaluate() + B.Evaluate();
+            return A.Evaluate() * B.Evaluate();
         }
     }
 }

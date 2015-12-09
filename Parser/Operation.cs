@@ -8,9 +8,9 @@ namespace Barbar.SymbolicMath.Parser
         public int Precedence { get; private set; }
         public Associativity Associativity { get; private set; }
         public bool Unary { get; private set; }
-        public Func<int, int, int> Evaluation { get; private set; }
+        public Func<SymMathNode, SymMathNode, SymMathNode> Evaluation { get; private set; }
 
-        public Operation(char @operator, int precedence, Associativity associativity, bool unary, Func<int, int, int> evaluation)
+        public Operation(char @operator, int precedence, Associativity associativity, bool unary, Func<SymMathNode, SymMathNode, SymMathNode> evaluation)
         {
             Operator = @operator;
             Precedence = precedence;

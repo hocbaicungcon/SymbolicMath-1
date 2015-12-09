@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="AddTest.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Parser\ParserTest.cs" />
     <Compile Include="TermTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MathUtilityTest.cs" />

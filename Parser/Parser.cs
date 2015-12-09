@@ -6,53 +6,14 @@ namespace Barbar.SymbolicMath.Parser
 {
     public class MathParser
     {
-        static int eval_uminus(int a1, int a2)
-        {
-            return -a1;
-        }
-        static int eval_exp(int a1, int a2)
-        {
-            return a2 < 0 ? 0 : (a2 == 0 ? 1 : a1 * eval_exp(a1, a2 - 1));
-        }
-        static int eval_mul(int a1, int a2)
-        {
-            return a1 * a2;
-        }
-        static int eval_div(int a1, int a2)
-        {
-            if (a2 == 0)
-            {
-                throw new InvalidOperationException("Division by zero.");
-            }
-            return a1 / a2;
-        }
-
-        static int eval_mod(int a1, int a2)
-        {
-            if (a2 == 0)
-            {
-                throw new InvalidOperationException("Division by zero.");
-            }
-            return a1 % a2;
-        }
-        static int eval_add(int a1, int a2)
-        {
-            return a1 + a2;
-        }
-        static int eval_sub(int a1, int a2)
-        {
-            return a1 - a2;
-        }
-
         private static readonly Operation[] s_Operations = new Operation[]
         {
-            new Operation('_', 10, Associativity.Right, true, eval_uminus),
-            new Operation('^', 9, Associativity.Right, false, eval_exp),
-            new Operation('*', 8, Associativity.Left, false, eval_mul),
-            new Operation('/', 8, Associativity.Left, false, eval_div),
-            new Operation('%', 8, Associativity.Left, false, eval_mod),
-            new Operation('+', 5, Associativity.Left, false, eval_add),
-            new Operation('-', 5, Associativity.Left, false, eval_sub),
+            new Operation('_', 10, Associativity.Right, true, (a,b) => new Minus(a)),
+            new Operation('^', 9, Associativity.Right, false, (a,b) => new Power(a,b)),
+            new Operation('*', 8, Associativity.Left, false, (a,b) => a * b),
+            new Operation('/', 8, Associativity.Left, false, (a,b) => a / b),
+            new Operation('+', 5, Associativity.Left, false, (a,b) => a + b),
+            new Operation('-', 5, Associativity.Left, false, (a,b) => new Add(a, new Minus(b))),
             new Operation('(', 0, Associativity.None, false, null),
             new Operation(')', 0, Associativity.None, false, null)
         };
@@ -62,33 +23,36 @@ namespace Barbar.SymbolicMath.Parser
             return s_Operations.FirstOrDefault(o => o.Operator == ch);
         }
 
-        Stack<Operation> operations = new Stack<Operation>();
-        Stack<int> numstack = new Stack<int>();
+        Stack<Operation> _operations = new Stack<Operation>();
+        Stack<SymMathNode> _nodes = new Stack<SymMathNode>();
 
+        private MathParser()
+        {
+        }
 
         void Shunt(Operation op)
         {
             Operation pop;
-            int n1, n2;
+            SymMathNode n1, n2;
             if (op.Operator == '(')
             {
-                operations.Push(op);
+                _operations.Push(op);
                 return;
             }
             else if (op.Operator == ')')
             {
-                while (numstack.Count > 0 && operations.Peek().Operator != '(')
+                while (_nodes.Count > 0 && _operations.Peek().Operator != '(')
                 {
-                    pop = operations.Pop();
-                    n1 = numstack.Pop();
-                    if (pop.Unary) numstack.Push(pop.Evaluation(n1, 0));
+                    pop = _operations.Pop();
+                    n1 = _nodes.Pop();
+                    if (pop.Unary) _nodes.Push(pop.Evaluation(n1, null));
                     else
                     {
-                        n2 = numstack.Pop();
-                        numstack.Push(pop.Evaluation(n2, n1));
+                        n2 = _nodes.Pop();
+                        _nodes.Push(pop.Evaluation(n2, n1));
                     }
                 }
-                pop = operations.Pop();
+                pop = _operations.Pop();
                 if (pop == null || pop.Operator != '(')
                 {
                     throw new Exception("ERROR: Stack error. No matching \'(\'");
@@ -98,33 +62,33 @@ namespace Barbar.SymbolicMath.Parser
 
             if (op.Associativity == Associativity.Right)
             {
-                while (operations.Count > 0 && op.Precedence < operations.Peek().Precedence)
+                while (_operations.Count > 0 && op.Precedence < _operations.Peek().Precedence)
                 {
-                    pop = operations.Pop();
-                    n1 = numstack.Pop();
-                    if (pop.Unary) numstack.Push(pop.Evaluation(n1, 0));
+                    pop = _operations.Pop();
+                    n1 = _nodes.Pop();
+                    if (pop.Unary) _nodes.Push(pop.Evaluation(n1, null));
                     else
                     {
-                        n2 = numstack.Pop();
-                        numstack.Push(pop.Evaluation(n2, n1));
+                        n2 = _nodes.Pop();
+                        _nodes.Push(pop.Evaluation(n2, n1));
                     }
                 }
             }
             else
             {
-                while (operations.Count > 0 && op.Precedence <= operations.Peek().Precedence)
+                while (_operations.Count > 0 && op.Precedence <= _operations.Peek().Precedence)
                 {
-                    pop = operations.Pop();
-                    n1 = numstack.Pop();
-                    if (pop.Unary) numstack.Push(pop.Evaluation(n1, 0));
+                    pop = _operations.Pop();
+                    n1 = _nodes.Pop();
+                    if (pop.Unary) _nodes.Push(pop.Evaluation(n1, null));
                     else
                     {
-                        n2 = numstack.Pop();
-                        numstack.Push(pop.Evaluation(n2, n1));
+                        n2 = _nodes.Pop();
+                        _nodes.Push(pop.Evaluation(n2, n1));
                     }
                 }
             }
-            operations.Push(op);
+            _operations.Push(op);
         }
 
         static bool IsDigit(char c)
@@ -153,11 +117,16 @@ namespace Barbar.SymbolicMath.Parser
             return result;
         }
 
-        public int Parse(string term)
+        public static SymMathNode Parse(string term)
+        {
+            return new MathParser().DoParse(term);
+        }
+
+        public SymMathNode DoParse(string term)
         {
             int termStart = -1;
-            Operation startop = new Operation('X', 0, Associativity.None, false, null); /* Dummy operator to mark start */
-            Operation lastop = startop;
+            var startop = new Operation('X', 0, Associativity.None, false, null); /* Dummy operator to mark start */
+            var lastop = startop;
 
 
             for (var i = 0; i < term.Length; i++)
@@ -197,7 +166,7 @@ namespace Barbar.SymbolicMath.Parser
                 }
                 if (IsSpace(expr))
                 {
-                    numstack.Push(Atoi(term, termStart));
+                    _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
                     termStart = -1;
                     lastop = null;
                     continue;
@@ -205,7 +174,7 @@ namespace Barbar.SymbolicMath.Parser
                 op = GetOperation(expr);
                 if (op != null)
                 {
-                    numstack.Push(Atoi(term, termStart));
+                    _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
                     termStart = -1;
                     Shunt(op);
                     lastop = op;
@@ -218,25 +187,25 @@ namespace Barbar.SymbolicMath.Parser
             }
             if (termStart >= 0)
             {
-                numstack.Push(Atoi(term, termStart));
+                _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
             }
 
-            while (operations.Count > 0)
+            while (_operations.Count > 0)
             {
-                var op = operations.Pop();
-                int n1 = numstack.Pop();
-                if (op.Unary) numstack.Push(op.Evaluation(n1, 0));
+                var op = _operations.Pop();
+                var n1 = _nodes.Pop();
+                if (op.Unary) _nodes.Push(op.Evaluation(n1, null));
                 else
                 {
-                    int n2 = numstack.Pop();
-                    numstack.Push(op.Evaluation(n2, n1));
+                    var n2 = _nodes.Pop();
+                    _nodes.Push(op.Evaluation(n2, n1));
                 }
             }
-            if (numstack.Count != 1)
+            if (_nodes.Count != 1)
             {
                 throw new Exception("ERROR: Number stack has % d elements after evaluation.Should be 1.");
             }
-            return numstack.Pop();
+            return _nodes.Pop();
         }
     }
 }
