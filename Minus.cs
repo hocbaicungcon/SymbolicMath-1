@@ -1,10 +1,26 @@
-﻿namespace Barbar.SymbolicMath
+﻿using System.Collections.Generic;
+using Barbar.SymbolicMath.SimplificationRules;
+
+namespace Barbar.SymbolicMath
 {
     /// <summary>
     /// Represent minus operation
     /// </summary>
     public class Minus : UnaryOperation
     {
+        private static TransformationRule<Minus>[] s_Rules = new TransformationRule<Minus>[]
+        {
+            new UnaryBaseRule<Minus>(),
+            new MinusMinusRule(),
+            new MinusConstantRule()
+        };
+
+
+        public override IList<ITransformationRule> GetSimplificationRules()
+        {
+            return s_Rules;
+        }
+
         /// <summary>
         /// ctor
         /// </summary>
@@ -12,16 +28,7 @@
         public Minus(SymMathNode a) : base(a)
         {
         }
-
-        /// <summary>
-        /// True if current expression can be simplified
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanSimplify()
-        {
-            return A is Minus || A is Term || A.CanSimplify();
-        }
-
+        
         /// <summary>
         /// Evaluates current expression tree and returns double
         /// Beware - this can lead to inaccuracies 
@@ -31,27 +38,7 @@
         {
             return -A.Evaluate();
         }
-
-        /// <summary>
-        /// Simplify current expression by one step (if possible)
-        /// </summary>
-        /// <returns></returns>
-        public override SymMathNode Simplify()
-        {
-            var minus = A as Minus;
-            if (minus != null)
-            {
-                return minus.A;
-            }
-            var term = A as Term;
-            if (term != null)
-            {
-                return term.Negate();
-            }
-
-            return base.Simplify();
-        }
-
+        
         /// <summary>
         /// Dump node to string
         /// </summary>
@@ -66,7 +53,7 @@
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        protected override UnaryOperation Clone(SymMathNode a)
+        public override UnaryOperation Clone(SymMathNode a)
         {
             return new Minus(a);
         }

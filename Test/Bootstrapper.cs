@@ -9,7 +9,7 @@ namespace Barbar.SymbolicMath.Test
         [AssemblyInitialize]
         public static void Bootstrap(TestContext context)
         {
-            Term.Factory = TermInt64.Factory;
+            Constant.Factory = ConstantInt64.Factory;
         }
 
     }

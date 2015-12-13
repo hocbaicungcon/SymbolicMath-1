@@ -1,69 +1,76 @@
-﻿using Barbar.SymbolicMath.Policies;
-using Barbar.SymbolicMath.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Numerics;
 
 namespace Barbar.SymbolicMath
 {
     /// <summary>
-    /// Implements term with long as background storage
+    /// Implements term with BigInteger as background storage
     /// Do not mix TermInt64 with TermBigInteger - choose one type and use it
     /// </summary>
-    public class TermInt64 : Term
+    public class ConstantBigInteger : Constant
     {
-        private long m_Value;
+        private BigInteger m_Value;
         /// <summary>
-        /// Factory for constructing terms (will return TermInt64)
+        /// Factory for constructing terms (will return TermBigInteger)
         /// </summary>
-        public static readonly new ITermFactory Factory = new TermInt64Factory();
+        public static readonly new IConstantFactory Factory = new TermBigIntegerFactory();
 
-        private class TermInt64Factory : ITermFactory
+        private class TermBigIntegerFactory : IConstantFactory
         {
-            public Term Create(long value)
+            public Constant Create(long value)
             {
-                return new TermInt64(value);
+                return new ConstantBigInteger(value);
             }
+        }
+
+        private static BigInteger Evaluate(Constant term)
+        {
+            if (term == null)
+            {
+                throw new ArgumentNullException("term");
+            }
+            var otherBig = term as ConstantBigInteger;
+            if (otherBig == null)
+            {
+                throw new ArgumentException("Can only evaluate TermBigInteger", "term");
+            }
+            return otherBig.m_Value;
         }
 
         /// <summary>
         /// ctor
         /// </summary>
         /// <param name="value"></param>
-        public TermInt64(long value)
+        public ConstantBigInteger(long value)
         {
             m_Value = value;
         }
 
         /// <summary>
-        /// Returns value as Int64, this is guaranteed not to overflow
+        /// ctor
+        /// </summary>
+        /// <param name="value"></param>
+        public ConstantBigInteger(BigInteger value)
+        {
+            m_Value = value;
+        }
+
+        /// <summary>
+        /// Returns value as Int64, beware - this can overflow for large values
         /// </summary>
         /// <returns></returns>
         public override long AsInt64()
         {
-            return m_Value;
+            return (long)m_Value;
         }
 
         /// <summary>
-        /// Clones current node (deep-copy)
+        /// Clon
         /// </summary>
         /// <returns></returns>
         public override SymMathNode Clone()
         {
-            return new TermInt64(m_Value);
-        }
-
-        private static long Evaluate(Term term)
-        {
-            if (term == null)
-            {
-                throw new ArgumentNullException("term");
-            }
-            var other64 = term as TermInt64;
-            if (other64 == null)
-            {
-                throw new ArgumentException("Can only evaluate TermInt64", "term");
-            }
-            return other64.m_Value;
+            return new ConstantBigInteger(m_Value);
         }
 
         /// <summary>
@@ -71,9 +78,9 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public override int CompareTo(Term other)
+        public override int CompareTo(Constant other)
         {
-            return Comparer<long>.Default.Compare(m_Value, Evaluate(other));
+            return BigInteger.Compare(m_Value, Evaluate(other));
         }
 
         /// <summary>
@@ -91,9 +98,9 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public override Term Gcd(Term other)
+        public override Constant Gcd(Constant other)
         {
-            return new TermInt64(Int64Policy.Instance.Gcd(m_Value, Evaluate(other)));
+            return new ConstantBigInteger(BigInteger.GreatestCommonDivisor(m_Value, Evaluate(other)));
         }
 
         /// <summary>
@@ -102,7 +109,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override bool IsOne()
         {
-            return m_Value == 1;
+            return m_Value.IsOne;
         }
 
         /// <summary>
@@ -111,25 +118,26 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override bool IsZero()
         {
-            return m_Value == 0;
+            return m_Value.IsZero;
         }
 
         /// <summary>
         /// Return value equal to 0 - term
         /// </summary>
         /// <returns></returns>
-        public override Term Negate()
+        public override Constant Negate()
         {
-            return new TermInt64(-m_Value);
+            return new ConstantBigInteger(-m_Value);
         }
 
         /// <summary>
-        /// Returns square root
+        ///  Returns square root
         /// </summary>
         /// <returns></returns>
-        public override Term Sqrt()
+        public override Constant Sqrt()
         {
-            return new TermInt64((long)Math.Sqrt((double)m_Value));
+            // TODO: proper implementation - i.e. Newton method
+            return new ConstantBigInteger((BigInteger)Math.Sqrt((double)m_Value));
         }
 
         /// <summary>
@@ -137,9 +145,9 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public override bool SymbolicEquality(SymMathNode node)
+        public override bool Equals(SymMathNode node)
         {
-            var term = node as TermInt64;
+            var term = node as ConstantBigInteger;
             if (term != null)
             {
                 return m_Value == term.m_Value;
@@ -148,75 +156,67 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
-        /// Returns this + other
+        /// Returns this + b
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
-        protected override Term AddTerm(Term other)
+        protected override Constant AddTerm(Constant b)
         {
-            return new TermInt64(m_Value + Evaluate(other));
+            return new ConstantBigInteger(m_Value + Evaluate(b));
         }
 
         /// <summary>
-        /// Returns this / other
+        /// Returns this / b
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
-        protected override Term DivTerm(Term other)
+        protected override Constant DivTerm(Constant b)
         {
-            return new TermInt64(m_Value / Evaluate(other));
+            return new ConstantBigInteger(m_Value / Evaluate(b));
         }
 
         /// <summary>
-        /// Returns this % other
+        /// Returns this % b
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
-        protected override Term ModTerm(Term other)
+        protected override Constant ModTerm(Constant b)
         {
-            return new TermInt64(m_Value % Evaluate(other));
+            return new ConstantBigInteger(m_Value % Evaluate(b));
         }
 
         /// <summary>
-        /// Returns this * other
+        /// Returns this * b
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
-        protected override Term MultiplyTerm(Term other)
+        protected override Constant MultiplyTerm(Constant b)
         {
-            return new TermInt64(m_Value * Evaluate(other));
+            return new ConstantBigInteger(m_Value * Evaluate(b));
         }
 
         /// <summary>
-        /// True if this is equal to obj
+        /// True if expression is equal to obj
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">TermBigInteger</param>
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            var term = obj as TermInt64;
+            var term = obj as ConstantBigInteger;
             if (term != null)
             {
                 return term.m_Value == m_Value;
-            }
-            if (obj is long)
-            {
-                return m_Value == (long)obj;
-            }
-            if (obj is int)
-            {
-                return m_Value == (int)obj;
             }
             return false;
         }
 
         /// <summary>
-        /// Returns hashcode
+        /// Computes hashcode
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return (int)m_Value;
+            return m_Value.GetHashCode();
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override bool IsNegative()
         {
-            return m_Value < 0;
+            return m_Value < BigInteger.Zero;
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override string ToString()
         {
-            return Convert.ToString(m_Value);
+            return m_Value.ToString();
         }
     }
 }

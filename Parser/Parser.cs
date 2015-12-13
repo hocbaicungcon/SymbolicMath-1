@@ -166,7 +166,7 @@ namespace Barbar.SymbolicMath.Parser
                 }
                 if (IsSpace(expr))
                 {
-                    _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
+                    _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
                     termStart = -1;
                     lastop = null;
                     continue;
@@ -174,7 +174,7 @@ namespace Barbar.SymbolicMath.Parser
                 op = GetOperation(expr);
                 if (op != null)
                 {
-                    _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
+                    _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
                     termStart = -1;
                     Shunt(op);
                     lastop = op;
@@ -187,7 +187,7 @@ namespace Barbar.SymbolicMath.Parser
             }
             if (termStart >= 0)
             {
-                _nodes.Push(Term.Factory.Create(Atoi(term, termStart)));
+                _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
             }
 
             while (_operations.Count > 0)

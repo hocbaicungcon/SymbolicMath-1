@@ -34,11 +34,11 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         public UnaryOperation(long a)
         {
-            if (Term.Factory == null)
+            if (Constant.Factory == null)
             {
                 throw new Exception("Please set Term.Factory first (you can set it to TermBigInteger.Factory or to TermInt64.Factory).");
             }
-            A = Term.Factory.Create(a);
+            A = Constant.Factory.Create(a);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override SymMathNode Clone()
         {
-            return Clone((SymMathNode)A.Clone());
+            return Clone(A.Clone());
         }
 
         /// <summary>
@@ -55,39 +55,21 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        protected abstract UnaryOperation Clone(SymMathNode a);
-
-        /// <summary>
-        /// True if current expression can be simplified
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanSimplify()
-        {
-            return A.CanSimplify();
-        }
-
-        /// <summary>
-        ///  Simplify current expression by one step (if possible)
-        /// </summary>
-        /// <returns></returns>
-        public override SymMathNode Simplify()
-        {
-            return Clone(A.Simplify());
-        }
+        public abstract UnaryOperation Clone(SymMathNode a);
 
         /// <summary>
         /// Returns true if this tree is equal to node tree
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public override bool SymbolicEquality(SymMathNode node)
+        public override bool Equals(SymMathNode node)
         {
             if (this.GetType() == node.GetType())
             {
                 var unaryOperation = node as UnaryOperation;
                 if (unaryOperation != null)
                 {
-                    return A.SymbolicEquality(unaryOperation.A);
+                    return A.Equals(unaryOperation.A);
                 }
             }
             return false;

@@ -29,12 +29,12 @@ namespace Barbar.SymbolicMath.Utilities
             var nodes = new List<SymMathNode>();
             var aFactors = new List<int>();
 
-            var term = (SymMathNode)(Term.Factory.Create(1) / (new SquareRoot(number) - Term.Factory.Create(a)));
+            var term = (SymMathNode)(Constant.Factory.Create(1) / (new SquareRoot(number) - Constant.Factory.Create(a)));
             while (true)
             {
                 term = term.GetBaseForm();
                 aFactors.Add((int)a);
-                if (nodes.Any(n => n.SymbolicEquality(term)))
+                if (nodes.Any(n => n.Equals(term)))
                 {
                     return aFactors;
                 }
@@ -45,15 +45,15 @@ namespace Barbar.SymbolicMath.Utilities
                 if (division != null)
                 {
                     add = (Add)division.A;
-                    d = ((Term)division.B).AsInt64();
+                    d = ((Constant)division.B).AsInt64();
                 }
-                long z = lbound + ((Term)add.B).AsInt64();
+                long z = lbound + ((Constant)add.B).AsInt64();
                 while (z % d != 0)
                 {
                     z--;
                 }
                 a = z / d;
-                term = (Term.Factory.Create(d) / (new SquareRoot(number) + Term.Factory.Create((((Term)add.B).AsInt64())) - Term.Factory.Create(z)));
+                term = (Constant.Factory.Create(d) / (new SquareRoot(number) + Constant.Factory.Create((((Constant)add.B).AsInt64())) - Constant.Factory.Create(z)));
             }
         }
 

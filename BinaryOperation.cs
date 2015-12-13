@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Barbar.SymbolicMath.SimplificationRules;
+using System;
+using System.Collections.Generic;
 
 namespace Barbar.SymbolicMath
 {
@@ -7,6 +9,11 @@ namespace Barbar.SymbolicMath
     /// </summary>
     public abstract class BinaryOperation : SymMathNode
     {
+        private static TransformationRule<BinaryOperation>[] s_Rules = new TransformationRule<BinaryOperation>[]
+        {
+            new BinaryBaseRule<BinaryOperation>()
+        };
+
         /// <summary>
         /// First node
         /// </summary>
@@ -21,7 +28,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected abstract BinaryOperation Clone(SymMathNode a, SymMathNode b);
+        public abstract BinaryOperation Clone(SymMathNode a, SymMathNode b);
 
         /// <summary>
         /// Clones current node (deep-copy)
@@ -29,7 +36,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public override SymMathNode Clone()
         {
-            return Clone((SymMathNode)A.Clone(), (SymMathNode)B.Clone());
+            return Clone(A.Clone(), B.Clone());
         }
 
         /// <summary>
@@ -51,36 +58,27 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
+        /// Return list of possible simplifications
+        /// </summary>
+        /// <returns></returns>
+        public override IList<ITransformationRule> GetSimplificationRules()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// ctor. Term.Factory has to be set otherwise exception is thrown
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
         public BinaryOperation(long a, long b)
         {
-            if (Term.Factory == null)
+            if (Constant.Factory == null)
             {
                 throw new Exception("Please set Term.Factory first (you can set it to TermBigInteger.Factory or to TermInt64.Factory).");
             }
-            A = Term.Factory.Create(a);
-            B = Term.Factory.Create(b);
-        }
-
-        /// <summary>
-        /// Returns true if we can simplify either node A or node B
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanSimplify()
-        {
-            return A.CanSimplify() || B.CanSimplify();
-        }
-
-        /// <summary>
-        /// Clones simplified tree of A and B
-        /// </summary>
-        /// <returns></returns>
-        public override SymMathNode Simplify()
-        {
-            return Clone(A.Simplify(), B.Simplify());
+            A = Constant.Factory.Create(a);
+            B = Constant.Factory.Create(b);
         }
 
         /// <summary>
@@ -89,14 +87,14 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public override bool SymbolicEquality(SymMathNode node)
+        public override bool Equals(SymMathNode node)
         {
             if (GetType() == node.GetType())
             {
                 var binaryOperation = node as BinaryOperation;
                 if (binaryOperation != null)
                 {
-                    return A.SymbolicEquality(binaryOperation.A) && B.SymbolicEquality(binaryOperation.B);
+                    return A.Equals(binaryOperation.A) && B.Equals(binaryOperation.B);
                 }
             }
             return false;
@@ -121,7 +119,7 @@ namespace Barbar.SymbolicMath
             var node = obj as SymMathNode;
             if (node != null)
             {
-                return SymbolicEquality(node);
+                return Equals(node);
             }
             return false;
         }

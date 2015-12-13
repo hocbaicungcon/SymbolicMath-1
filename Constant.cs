@@ -6,18 +6,18 @@ namespace Barbar.SymbolicMath
     /// Represent integer value. Class is abstact as can be implemented in two ways
     /// T:TermInt64 (limited to min/max value of Int64) and T:TermBigInteger (no limit)
     /// </summary>
-    public abstract class Term : SymMathNode, IComparable<Term>
+    public abstract class Constant : SymMathNode, IComparable<Constant>
     {
         /// <summary>
         /// Default factory for constructing terms. Initial value is null.
         /// Set it to either TermInt64 or TermBigInteger
         /// </summary>
-        public static ITermFactory Factory;
+        public static IConstantFactory Factory;
         /// <summary>
         /// Returns square root
         /// </summary>
         /// <returns></returns>
-        public abstract Term Sqrt();
+        public abstract Constant Sqrt();
 
         /// <summary>
         /// True if term is zero
@@ -41,14 +41,14 @@ namespace Barbar.SymbolicMath
         /// Return value equal to 0 - term
         /// </summary>
         /// <returns></returns>
-        public abstract Term Negate();
+        public abstract Constant Negate();
 
         /// <summary>
         /// Computes greatest common divisor
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        public abstract Term Gcd(Term b);
+        public abstract Constant Gcd(Constant b);
 
         /// <summary>
         /// Computes greates common divisor
@@ -56,7 +56,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Term Gcd(Term a, Term b)
+        public static Constant Gcd(Constant a, Constant b)
         {
             if (a == null)
             {
@@ -70,50 +70,32 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
-        /// Returns always false as simple numeric value can't be simplified anymore
-        /// </summary>
-        /// <returns>Always false</returns>
-        public override bool CanSimplify()
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// Returns this as simple numeric value can't be simplified anymore
-        /// </summary>
-        /// <returns>this</returns>
-        public override SymMathNode Simplify()
-        {
-            return this;
-        }
-
-        /// <summary>
         /// Returns this + b
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected abstract Term AddTerm(Term b);
+        protected abstract Constant AddTerm(Constant b);
 
         /// <summary>
         /// Returns this * b
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected abstract Term MultiplyTerm(Term b);
+        protected abstract Constant MultiplyTerm(Constant b);
 
         /// <summary>
         /// Returns this % b
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected abstract Term ModTerm(Term b);
+        protected abstract Constant ModTerm(Constant b);
 
         /// <summary>
         /// Returns this / b
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected abstract Term DivTerm(Term b);
+        protected abstract Constant DivTerm(Constant b);
 
         /// <summary>
         /// Returns true if term is below zero
@@ -126,7 +108,7 @@ namespace Barbar.SymbolicMath
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public abstract int CompareTo(Term other);
+        public abstract int CompareTo(Constant other);
 
         /// <summary>
         /// Throws an exception - override in child class
@@ -153,7 +135,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Term operator +(Term a, Term b)
+        public static Constant operator +(Constant a, Constant b)
         {
             return a.AddTerm(b);
         }
@@ -164,7 +146,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Term operator *(Term a, Term b)
+        public static Constant operator *(Constant a, Constant b)
         {
             return a.MultiplyTerm(b);
         }
@@ -175,7 +157,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Term operator %(Term a, Term b)
+        public static Constant operator %(Constant a, Constant b)
         {
             return a.ModTerm(b);
         }
@@ -186,7 +168,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static SymMathNode operator /(Term a, Term b)
+        public static SymMathNode operator /(Constant a, Constant b)
         {
             if ((a % b).IsZero())
             {
@@ -201,7 +183,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static bool operator >(Term a, Term b)
+        public static bool operator >(Constant a, Constant b)
         {
             return a.CompareTo(b) > 0;
         }
@@ -212,7 +194,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static bool operator <(Term a, Term b)
+        public static bool operator <(Constant a, Constant b)
         {
             return a.CompareTo(b) < 0;
         }
@@ -223,7 +205,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static bool operator==(Term a, Term b)
+        public static bool operator==(Constant a, Constant b)
         {
             if (object.ReferenceEquals(a, null))
             {
@@ -238,7 +220,7 @@ namespace Barbar.SymbolicMath
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static bool operator !=(Term a, Term b)
+        public static bool operator !=(Constant a, Constant b)
         {
             return !(a == b);
         }

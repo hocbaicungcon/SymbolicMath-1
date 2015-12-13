@@ -8,6 +8,69 @@ namespace Barbar.SymbolicMath
     public static class Extensions
     {
         /// <summary>
+        /// If any simplification rule exits, simplify given node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static bool CanSimplify(this SymMathNode node)
+        {
+            foreach (var rule in node.GetSimplificationRules())
+            {
+                if (rule.IsApplicable(node))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// If any simplification rule exits, simplify given node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static SymMathNode Simplify(this SymMathNode node)
+        {
+            foreach(var rule in node.GetSimplificationRules())
+            {
+                if (rule.IsApplicable(node))
+                {
+                    return rule.Apply(node);
+                }
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// Applies all simplification rules, until none is applicable
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static SymMathNode GetBaseForm(this SymMathNode node)
+        {
+            var result = node;
+            while (true)
+            {
+                bool ruleFound = false;
+                foreach (var rule in result.GetSimplificationRules())
+                {
+                    if (rule.IsApplicable(result))
+                    {
+                        result = rule.Apply(result);
+                        ruleFound = true;
+                        break;
+                    }
+                }
+                if (!ruleFound)
+                {
+                    return result;
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Returns ture if node is of type T and condition evaluate is satisfied
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -31,7 +94,7 @@ namespace Barbar.SymbolicMath
         /// <returns></returns>
         public static bool IsMinusOrNegativeTerm(this SymMathNode node)
         {
-            return node is Minus || node.IfType<Term>(t => t.IsNegative());
+            return node is Minus || node.IfType<Constant>(t => t.IsNegative());
         }
 
         /// <summary>

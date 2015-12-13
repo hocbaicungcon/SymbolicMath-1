@@ -9,11 +9,11 @@ namespace Barbar.SymbolicMath.Test
         [TestMethod]
         public void SimplifyAddToFraction()
         {
-            var c = Term.Factory.Create(3) + (Term.Factory.Create(3) / Term.Factory.Create(2));
+            var c = Constant.Factory.Create(3) + (Constant.Factory.Create(3) / Constant.Factory.Create(2));
             var baseForm = c.GetBaseForm();
             Assert.AreEqual(new Division(9, 2), baseForm);
 
-            c = (Term.Factory.Create(3) / Term.Factory.Create(2)) + Term.Factory.Create(3);
+            c = (Constant.Factory.Create(3) / Constant.Factory.Create(2)) + Constant.Factory.Create(3);
             baseForm = c.GetBaseForm();
             Assert.AreEqual(new Division(9, 2), baseForm);
         }
@@ -21,13 +21,13 @@ namespace Barbar.SymbolicMath.Test
         [TestMethod]
         public void SimplifyZero()
         {
-            var sqrt = new SquareRoot(new TermInt64(3));
-            var c = sqrt + Term.Factory.Create(0);
+            var sqrt = new SquareRoot(new ConstantInt64(3));
+            var c = sqrt + Constant.Factory.Create(0);
             var baseForm = c.GetBaseForm();
             Assert.AreEqual(sqrt, baseForm);
 
 
-            c = new TermInt64(0) + sqrt;
+            c = new ConstantInt64(0) + sqrt;
             baseForm = c.GetBaseForm();
             Assert.AreEqual(sqrt, baseForm);
         }
@@ -35,9 +35,9 @@ namespace Barbar.SymbolicMath.Test
         [TestMethod]
         public void Simplify()
         {
-            var c = (SymMathNode)Term.Factory.Create(10) + Term.Factory.Create(5);
+            var c = (SymMathNode)Constant.Factory.Create(10) + Constant.Factory.Create(5);
             var baseForm = c.GetBaseForm();
-            Assert.IsInstanceOfType(baseForm, typeof(Term));
+            Assert.IsInstanceOfType(baseForm, typeof(Constant));
             Assert.AreEqual(baseForm, 15);
         }
     }

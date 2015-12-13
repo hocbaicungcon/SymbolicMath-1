@@ -1,39 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Barbar.SymbolicMath
 {
     /// <summary>
     /// Base abstract class for symbolic mathematic
     /// </summary>
-    public abstract class SymMathNode
+    public abstract class SymMathNode : IEquatable<SymMathNode>
     {
+        private static ITransformationRule[] s_Rules = new ITransformationRule[] { };
+
         /// <summary>
-        /// Returns true if this tree is equal to node tree
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public abstract bool SymbolicEquality(SymMathNode node);
-        /// <summary>
-        /// Simplify current expression by one step (if possible)
+        /// Return list of possible simplifications
         /// </summary>
         /// <returns></returns>
-        public abstract SymMathNode Simplify();
-        /// <summary>
-        /// True if current expression can be simplified
-        /// </summary>
-        /// <returns></returns>
-        public abstract bool CanSimplify();
-        /// <summary>
-        /// Evaluates current expression tree and returns double
-        /// Beware - this can lead to inaccuracies 
-        /// </summary>
-        /// <returns></returns>
+        public virtual IList<ITransformationRule> GetSimplificationRules()
+        {
+            return s_Rules;
+        }
+        
+
         public abstract double Evaluate();
         /// <summary>
         /// Clones current node (deep-copy)
         /// </summary>
         /// <returns></returns>
         public abstract SymMathNode Clone();
+        /*
         /// <summary>
         /// Reduces expression to basic form
         /// </summary>
@@ -46,7 +39,15 @@ namespace Barbar.SymbolicMath
                 clone = clone.Simplify();
             }
             return clone;
-        }
+        }*/
+
+        /// <summary>
+        /// Returns true if node equal to another
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public abstract bool Equals(SymMathNode other);
+
         /// <summary>
         /// Returns new Add(a,b)
         /// </summary>

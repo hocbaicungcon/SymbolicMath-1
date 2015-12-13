@@ -21,16 +21,6 @@ namespace Barbar.SymbolicMath
             Symbol = symbol;
         }
 
-
-        /// <summary>
-        /// Always false
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanSimplify()
-        {
-            return false;
-        }
-
         /// <summary>
         /// Clone variable
         /// </summary>
@@ -50,20 +40,11 @@ namespace Barbar.SymbolicMath
         }
         
         /// <summary>
-        /// Returns this
-        /// </summary>
-        /// <returns></returns>
-        public override SymMathNode Simplify()
-        {
-            return this;
-        }
-
-        /// <summary>
         /// True if equal to variable represented by the same symbol
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public override bool SymbolicEquality(SymMathNode node)
+        public override bool Equals(SymMathNode node)
         {
             var term = node as Variable;
             if (term != null)

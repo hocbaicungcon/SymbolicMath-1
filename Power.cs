@@ -18,7 +18,7 @@ namespace Barbar.SymbolicMath
             return Math.Pow(A.Evaluate(), B.Evaluate());
         }
 
-        protected override BinaryOperation Clone(SymMathNode a, SymMathNode b)
+        public override BinaryOperation Clone(SymMathNode a, SymMathNode b)
         {
             return new Power(a, b);
         }

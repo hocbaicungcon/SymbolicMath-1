@@ -1,10 +1,38 @@
-﻿namespace Barbar.SymbolicMath
+﻿using System.Collections.Generic;
+using Barbar.SymbolicMath.SimplificationRules;
+
+namespace Barbar.SymbolicMath
 {
     /// <summary>
     /// Represent multiplication
     /// </summary>
     public class Multiply : BinaryOperation
     {
+        private static TransformationRule<Multiply>[] s_Rules = new TransformationRule<Multiply>[]
+        {
+            new BinaryBaseRule<Multiply>(),
+            new MultiplyByZeroRule(),
+            new MultiplyByOneRule(),
+            new MultiplyProductConstantsRule(),
+            new MultiplySquareRootRule()
+        };
+
+        /// <summary>
+        /// Return list of possible simplifications
+        /// </summary>
+        /// <returns></returns>
+        public override IList<ITransformationRule> GetSimplificationRules()
+        {
+            return s_Rules;
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public Multiply()
+        {
+        }
+
         /// <summary>
         /// ctor
         /// </summary>
@@ -19,9 +47,9 @@
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public override bool SymbolicEquality(SymMathNode node)
+        public override bool Equals(SymMathNode node)
         {
-            if (base.SymbolicEquality(node))
+            if (base.Equals(node))
             {
                 return true;
             }
@@ -29,64 +57,12 @@
             var add = node as Multiply;
             if (add != null)
             {
-                return A.SymbolicEquality(add.B) && B.SymbolicEquality(add.A);
+                return A.Equals(add.B) && B.Equals(add.A);
             }
 
             return false;
         }
 
-        /// <summary>
-        /// Simplify current expression by one step (if possible)
-        /// </summary>
-        /// <returns></returns>
-        public override SymMathNode Simplify()
-        {
-            if (A.CanSimplify() || B.CanSimplify())
-            {
-                return A.Simplify() * B.Simplify();
-            }
-
-            if (A is Term && B is Term)
-            {
-                return (Term)A * (Term)B;
-            }
-
-            var a = A as Term;
-            var b = B as Term;
-            if (a != null && a.IsOne())
-            {
-                return B;
-            }
-
-            if (b != null && b.IsOne())
-            {
-                return A;
-            }
-
-            var ar = A as SquareRoot;
-            var br = B as SquareRoot;
-            if (ar != null && br != null && ar.A.SymbolicEquality(br.A))
-            {
-                return ar.A;
-            }
-
-            return base.Simplify();
-        }
-
-        /// <summary>
-        /// True if current expression can be simplified
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanSimplify()
-        {
-            return
-              base.CanSimplify() ||
-              (A is Term && ((Term)A).IsOne()) ||
-              (B is Term && ((Term)B).IsOne()) ||
-              (A is Term && B is Term) ||
-              (A is SquareRoot && B is SquareRoot && ((SquareRoot)A).A.SymbolicEquality(((SquareRoot)B).A))
-              ;
-        }
 
         /// <summary>
         /// Clones current node (deep-copy)
@@ -94,7 +70,7 @@
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected override BinaryOperation Clone(SymMathNode a, SymMathNode b)
+        public override BinaryOperation Clone(SymMathNode a, SymMathNode b)
         {
             return new Multiply(a, b);
         }
