@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Barbar.SymbolicMath.Test
 {
     [TestClass]
-    public class TermTest
+    public class ConstantTest
     {
         [TestMethod]
         public void Clone()

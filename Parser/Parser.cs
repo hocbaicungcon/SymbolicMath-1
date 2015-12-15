@@ -8,19 +8,31 @@ namespace Barbar.SymbolicMath.Parser
     {
         private static readonly Operation[] s_Operations = new Operation[]
         {
-            new Operation('_', 10, Associativity.Right, true, (a,b) => new Minus(a)),
-            new Operation('^', 9, Associativity.Right, false, (a,b) => new Power(a,b)),
-            new Operation('*', 8, Associativity.Left, false, (a,b) => a * b),
-            new Operation('/', 8, Associativity.Left, false, (a,b) => a / b),
-            new Operation('+', 5, Associativity.Left, false, (a,b) => a + b),
-            new Operation('-', 5, Associativity.Left, false, (a,b) => new Add(a, new Minus(b))),
-            new Operation('(', 0, Associativity.None, false, null),
-            new Operation(')', 0, Associativity.None, false, null)
+            new Operation("sqrt", 10, Associativity.Right, true, (a,b) => new SquareRoot(a)),
+            new Operation("_", 10, Associativity.Right, true, (a,b) => new Minus(a)),
+            new Operation("^", 9, Associativity.Right, false, (a,b) => new Power(a,b)),
+            new Operation("*", 8, Associativity.Left, false, (a,b) => a * b),
+            new Operation("/", 8, Associativity.Left, false, (a,b) => a / b),
+            new Operation("+", 5, Associativity.Left, false, (a,b) => a + b),
+            new Operation("-", 5, Associativity.Left, false, (a,b) => new Add(a, new Minus(b))),
+            new Operation("(", 1, Associativity.None, false, null),
+            new Operation(")", 1, Associativity.None, false, null),
+            new Operation("=", 0, Associativity.None, false, (a,b) => new Equality(a,b))
         };
 
-        private static Operation GetOperation(char ch)
+        private static Operation GetOperation(string term, ref int index)
         {
-            return s_Operations.FirstOrDefault(o => o.Operator == ch);
+            foreach(var operation in s_Operations)
+            {
+                if (term.StartsWith(operation.Operator))
+                {
+                    index += operation.Operator.Length - 1;
+                    return operation;
+                }
+            }
+            return null;
+
+        //  return s_Operations.FirstOrDefault(o => o.Operator == ch);
         }
 
         Stack<Operation> _operations = new Stack<Operation>();
@@ -34,14 +46,14 @@ namespace Barbar.SymbolicMath.Parser
         {
             Operation pop;
             SymMathNode n1, n2;
-            if (op.Operator == '(')
+            if (op.Operator.StartsWith("("))
             {
                 _operations.Push(op);
                 return;
             }
-            else if (op.Operator == ')')
+            else if (op.Operator.StartsWith(")"))
             {
-                while (_nodes.Count > 0 && _operations.Peek().Operator != '(')
+                while (_nodes.Count > 0 && !_operations.Peek().Operator.StartsWith("("))
                 {
                     pop = _operations.Pop();
                     n1 = _nodes.Pop();
@@ -53,7 +65,7 @@ namespace Barbar.SymbolicMath.Parser
                     }
                 }
                 pop = _operations.Pop();
-                if (pop == null || pop.Operator != '(')
+                if (pop == null || !pop.Operator.StartsWith("("))
                 {
                     throw new Exception("ERROR: Stack error. No matching \'(\'");
                 }
@@ -125,7 +137,7 @@ namespace Barbar.SymbolicMath.Parser
         public SymMathNode DoParse(string term)
         {
             int termStart = -1;
-            var startop = new Operation('X', 0, Associativity.None, false, null); /* Dummy operator to mark start */
+            var startop = new Operation("$", 0, Associativity.None, false, null); /* Dummy operator to mark start */
             var lastop = startop;
 
 
@@ -135,16 +147,16 @@ namespace Barbar.SymbolicMath.Parser
                 var expr = term[i];
                 if (termStart < 0)
                 {
-                    op = GetOperation(expr);
+                    op = GetOperation(term.Substring(i), ref i);
                     if (op != null)
                     {
-                        if (lastop != null && (lastop == startop || lastop.Operator != ')'))
+                        if (lastop != null && (lastop == startop || !lastop.Operator.StartsWith(")")))
                         {
-                            if (op.Operator == '-')
+                            if (op.Operator.StartsWith("-"))
                             {
-                                op = GetOperation('_');
+                                op = GetOperation("_", ref i);
                             }
-                            else if (op.Operator != '(')
+                            else if (!op.Unary && !op.Operator.StartsWith("("))
                             {
                                 throw new Exception("ERROR: Illegal use of binary operator (" + op.Operator + ")");
                             }
@@ -171,7 +183,7 @@ namespace Barbar.SymbolicMath.Parser
                     lastop = null;
                     continue;
                 }
-                op = GetOperation(expr);
+                op = GetOperation(term.Substring(i), ref i);
                 if (op != null)
                 {
                     _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));

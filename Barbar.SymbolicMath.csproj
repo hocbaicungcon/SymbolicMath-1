@@ -41,6 +41,7 @@
     <Compile Include="Add.cs" />
     <Compile Include="BinaryOperation.cs" />
     <Compile Include="Division.cs" />
+    <Compile Include="Equality.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ITransformationRule.cs" />
     <Compile Include="Policies\BigIntegerPolicy.cs" />
