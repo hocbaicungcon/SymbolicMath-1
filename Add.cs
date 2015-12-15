@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 using Barbar.SymbolicMath.SimplificationRules;
 
 namespace Barbar.SymbolicMath
@@ -77,20 +79,6 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
-        /// Dump node to string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            if (B is Minus)
-            {
-                return string.Format("({0}-{1})", A, ((Minus)B).A);
-            }
-
-            return string.Format("({0}+{1})", A, B);
-        }
-
-        /// <summary>
         /// Evaluates current expression tree and returns double
         /// Beware - this can lead to inaccuracies 
         /// </summary>
@@ -98,6 +86,56 @@ namespace Barbar.SymbolicMath
         public override double Evaluate()
         {
             return A.Evaluate() + B.Evaluate();
+        }
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="parent"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            bool brackets = parent != null && !(parent is Add);
+            if (brackets)
+            {
+                writer.WriteElementString("mo", "(");
+            }
+            A.ToMathML(writer, this);
+            writer.WriteElementString("mo", "+");
+            B.ToMathML(writer, this);
+            if (brackets)
+            {
+                writer.WriteElementString("mo", ")");
+            }
+        }
+
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
+        {
+            bool brackets = parent != null && !(parent is Add);
+            if (brackets)
+            {
+                builder.Append("(");
+            }
+            A.ToString(builder, this);
+            if (B is Minus)
+            {
+                builder.Append("-");
+                ((Minus)B).A.ToString(builder, this);
+            }
+            else
+            {
+                builder.Append("+");
+                B.ToString(builder, this);
+            }
+            if (brackets)
+            {
+                builder.Append(")");
+            }
         }
     }
 }

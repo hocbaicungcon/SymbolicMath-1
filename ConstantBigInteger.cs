@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Numerics;
+using System.Text;
+using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
@@ -229,12 +231,30 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            if (m_Value < 0)
+            {
+                writer.WriteElementString("mo", "-");
+                writer.WriteElementString("mn", BigInteger.Abs(m_Value).ToString());
+            }
+            else
+            {
+                writer.WriteElementString("mn", m_Value.ToString());
+            }
+        }
+
+        /// <summary>
         /// Dump node to string
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
         {
-            return m_Value.ToString();
+            builder.Append(m_Value.ToString());
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
@@ -18,36 +20,56 @@ namespace Barbar.SymbolicMath
         {
             return s_Rules;
         }
-        
 
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            ToString(builder, null);
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public abstract void ToString(StringBuilder builder, SymMathNode parent);
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        public void ToMathML(XmlWriter writer)
+        {
+            ToMathML(writer, null);
+        }
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        public abstract void ToMathML(XmlWriter writer, SymMathNode parent);
+
+        /// <summary>
+        /// Evaluate expression
+        /// </summary>
+        /// <returns></returns>
         public abstract double Evaluate();
         /// <summary>
         /// Clones current node (deep-copy)
         /// </summary>
         /// <returns></returns>
         public abstract SymMathNode Clone();
-        /*
-        /// <summary>
-        /// Reduces expression to basic form
-        /// </summary>
-        /// <returns></returns>
-        public SymMathNode GetBaseForm()
-        {
-            var clone = this;
-            while(clone.CanSimplify())
-            {
-                clone = clone.Simplify();
-            }
-            return clone;
-        }*/
-
         /// <summary>
         /// Returns true if node equal to another
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public abstract bool Equals(SymMathNode other);
-
         /// <summary>
         /// Returns new Add(a,b)
         /// </summary>
@@ -58,7 +80,6 @@ namespace Barbar.SymbolicMath
         {
             return new Add(a, b);
         }
-
         /// <summary>
         /// Returns new Multiply(a,b)
         /// </summary>
@@ -91,5 +112,7 @@ namespace Barbar.SymbolicMath
         {
             return new Add(a, new Minus(b));
         }
+
+        
     }
 }

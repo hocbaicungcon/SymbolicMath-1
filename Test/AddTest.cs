@@ -1,11 +1,28 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Barbar.SymbolicMath.Parser;
 
 namespace Barbar.SymbolicMath.Test
 {
     [TestClass]
     public class AddTest
     {
+        [TestMethod]
+        public void ToString()
+        {
+            var node = MathParser.Parse("(2+4)*7");
+            Assert.AreEqual("(2+4)*7", node.ToString());
+
+            node = MathParser.Parse("(2+4)+5*3");
+            Assert.AreEqual("2+4+5*3", node.ToString());
+
+            node = MathParser.Parse("(2+4)+3");
+            Assert.AreEqual("2+4+3", node.ToString());
+
+            node = MathParser.Parse("(2+4)-3");
+            Assert.AreEqual("2+4-3", node.ToString());
+        }
+
         [TestMethod]
         public void SimplifyAddToFraction()
         {

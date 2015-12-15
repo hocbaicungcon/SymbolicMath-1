@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
@@ -52,6 +54,26 @@ namespace Barbar.SymbolicMath
                 return string.Equals(Symbol, term.Symbol, StringComparison.OrdinalIgnoreCase);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="parent"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            writer.WriteElementString("mi", Symbol);
+        }
+
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
+        {
+            builder.Append(Symbol);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Barbar.SymbolicMath.SimplificationRules;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
@@ -58,15 +60,6 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
-        /// Dump node to string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format("({0}/{1})", A, B);
-        }
-
-        /// <summary>
         /// Evaluates current expression tree and returns double
         /// Beware - this can lead to inaccuracies 
         /// </summary>
@@ -83,6 +76,35 @@ namespace Barbar.SymbolicMath
         public Division Revert()
         {
             return new Division(B, A);
+        }
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="parent"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            writer.WriteStartElement("mfrac");
+            writer.WriteStartElement("mrow");
+            A.ToMathML(writer, this);
+            writer.WriteEndElement();
+            writer.WriteStartElement("mrow");
+            B.ToMathML(writer, this);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
+        {
+            A.ToString(builder, this);
+            builder.Append("/");
+            B.ToString(builder, this);
         }
     }
 }

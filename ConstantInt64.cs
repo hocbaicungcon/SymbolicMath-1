@@ -2,6 +2,8 @@
 using Barbar.SymbolicMath.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
@@ -229,12 +231,30 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            if (m_Value < 0)
+            {
+                writer.WriteElementString("mo", "-");
+                writer.WriteElementString("mn", Convert.ToString(-m_Value));
+            }
+            else
+            {
+                writer.WriteElementString("mn", Convert.ToString(m_Value));
+            }
+        }
+
+        /// <summary>
         /// Dump node to string
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
         {
-            return Convert.ToString(m_Value);
+            builder.Append(m_Value);
         }
     }
 }

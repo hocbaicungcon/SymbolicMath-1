@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 using Barbar.SymbolicMath.SimplificationRules;
 
 namespace Barbar.SymbolicMath
@@ -76,15 +79,6 @@ namespace Barbar.SymbolicMath
         }
 
         /// <summary>
-        /// Dump node to string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format("({0}*{1})", A, B);
-        }
-
-        /// <summary>
         /// Evaluates current expression tree and returns double
         /// Beware - this can lead to inaccuracies 
         /// </summary>
@@ -92,6 +86,30 @@ namespace Barbar.SymbolicMath
         public override double Evaluate()
         {
             return A.Evaluate() * B.Evaluate();
+        }
+
+        /// <summary>
+        /// Dump node to MathML
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="parent"></param>
+        public override void ToMathML(XmlWriter writer, SymMathNode parent)
+        {
+            A.ToMathML(writer, this);
+            writer.WriteElementString("mo", "&#x000D7;");
+            B.ToMathML(writer, this);
+        }
+
+        /// <summary>
+        /// Dump node to string
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="parent"></param>
+        public override void ToString(StringBuilder builder, SymMathNode parent)
+        {
+            A.ToString(builder, this);
+            builder.Append("*");
+            B.ToString(builder, this);
         }
     }
 }
