@@ -109,24 +109,34 @@ namespace Barbar.SymbolicMath.Parser
             return digit >= 0 && digit <= 9;
         }
 
+        static bool IsVariable(char c)
+        {
+            return c == 'x' || c == 'y' || c == 'z';
+        }
+
         static bool IsSpace(char c)
         {
             return c == ' ';
         }
 
-        int Atoi(string term, int index)
+        SymMathNode ParseConstOrVariable(string term, int index)
         {
+            if (IsVariable(term[index]))
+            {
+                return new Variable(Convert.ToString(term[index]));
+            }
+
             int result = 0;
             for (int i = index; i < term.Length; i++)
             {
                 if (!IsDigit(term[i]))
                 {
-                    return result;
+                    return Constant.Factory.Create(result);
                 }
                 result *= 10;
                 result += term[i] - '0';
             }
-            return result;
+            return Constant.Factory.Create(result);
         }
 
         public static SymMathNode Parse(string term)
@@ -165,7 +175,7 @@ namespace Barbar.SymbolicMath.Parser
                         lastop = op;
                         continue;
                     }
-                    if (IsDigit(expr))
+                    if (IsDigit(expr) || IsVariable(expr))
                     {
                         termStart = i;
                         continue;
@@ -178,7 +188,7 @@ namespace Barbar.SymbolicMath.Parser
                 }
                 if (IsSpace(expr))
                 {
-                    _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
+                    _nodes.Push(ParseConstOrVariable(term, termStart));
                     termStart = -1;
                     lastop = null;
                     continue;
@@ -186,20 +196,20 @@ namespace Barbar.SymbolicMath.Parser
                 op = GetOperation(term.Substring(i), ref i);
                 if (op != null)
                 {
-                    _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
+                    _nodes.Push(ParseConstOrVariable(term, termStart));
                     termStart = -1;
                     Shunt(op);
                     lastop = op;
                     continue;
                 }
-                if (!IsDigit(expr))
+                if (!IsDigit(expr) && !IsVariable(expr))
                 {
                     throw new Exception("ERROR: Syntax error");
                 }
             }
             if (termStart >= 0)
             {
-                _nodes.Push(Constant.Factory.Create(Atoi(term, termStart)));
+                _nodes.Push(ParseConstOrVariable(term, termStart));
             }
 
             while (_operations.Count > 0)

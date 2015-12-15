@@ -15,7 +15,8 @@ namespace Barbar.SymbolicMath.Test
         public void Parse()
         {
             var node = MathParser.Parse("3+3=2*3");
-            node = MathParser.Parse("sqrt(7) * sqrt(3+4) = 7");
+            node = MathParser.Parse("sqrt(x) * sqrt(x) = 7");
+            node = MathParser.Parse("4 * x + 3 = 19");
         }
     }
 }
