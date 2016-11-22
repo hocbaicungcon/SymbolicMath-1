@@ -57,6 +57,24 @@ namespace Barbar.SymbolicMath.Rationals
         }
 
         /// <summary>
+        /// True if numerator is zero
+        /// </summary>
+        /// <returns></returns>
+        public bool IsZero()
+        {
+            return Policy.IsZero(Numerator);
+        }
+
+        /// <summary>
+        /// True if denominator is zero
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNan()
+        {
+            return Policy.IsZero(Denominator);
+        }
+
+        /// <summary>
         /// Normalize according to folowing rules
         ///   a) if there is a minus sign it will remain only in numerator
         ///   b) if there is common divisor, both numerator and denominator are divided by this common divisor

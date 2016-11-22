@@ -45,6 +45,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ITransformationRule.cs" />
     <Compile Include="Policies\BigIntegerPolicy.cs" />
+    <Compile Include="Rationals\RationalFactory.cs" />
     <Compile Include="SimplificationRules\DivisionCommonRule.cs" />
     <Compile Include="SimplificationRules\DivisionNByOneRule.cs" />
     <Compile Include="SimplificationRules\DivisionOfDivisionRule.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="UnaryOperation.cs" />
     <Compile Include="Utilities\MathUtility.cs" />
     <Compile Include="Variable.cs" />
+    <Compile Include="Vectors\GaussElimination.cs" />
     <Compile Include="Vectors\Matrix.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

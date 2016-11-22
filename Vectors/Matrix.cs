@@ -75,70 +75,103 @@ namespace Barbar.SymbolicMath.Vectors
         /// <summary>
         /// Set one row in matrix from an array
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="parts"></param>
-        public void SetRow(int row, T[] parts)
+        /// <param name="rowIndex"></param>
+        /// <param name="rowValues"></param>
+        public void SetRow(int rowIndex, T[] rowValues)
         {
-            if (row < 0 || row >= Height)
+            if (rowIndex < 0 || rowIndex >= Height)
             {
-                throw new ArgumentOutOfRangeException("row");
+                throw new ArgumentOutOfRangeException("rowIndex");
             }
-            if (parts == null)
+            if (rowValues == null)
             {
-                throw new ArgumentNullException("parts");
+                throw new ArgumentNullException("rowValues");
             }
-            if (parts.Length != Width)
+            if (rowValues.Length != Width)
             {
-                throw new ArgumentException("Array size doesn't match columns count.", "parts");
+                throw new ArgumentException("Array size doesn't match columns count.", "rowValues");
             }
-            Array.Copy(parts, 0, m_Data, row * Width, Width);
+            Array.Copy(rowValues, 0, m_Data, rowIndex * Width, Width);
         }
 
         /// <summary>
         /// Copy one row from matrix into an array
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="parts"></param>
-        public void GetRow(int row, T[] parts)
+        /// <param name="rowIndex"></param>
+        /// <param name="rowValues"></param>
+        public void GetRow(int rowIndex, T[] rowValues)
         {
-            if (row < 0 || row >= Height)
+            if (rowIndex < 0 || rowIndex >= Height)
             {
-                throw new ArgumentOutOfRangeException("row");
+                throw new ArgumentOutOfRangeException("rowIndex");
             }
-            if (parts == null)
+            if (rowValues == null)
             {
-                throw new ArgumentNullException("parts");
+                throw new ArgumentNullException("rowValues");
             }
-            if (parts.Length != Width)
+            if (rowValues.Length != Width)
             {
-                throw new ArgumentException("Array size doesn't match columns count.", "parts");
+                throw new ArgumentException("Array size doesn't match columns count.", "rowValues");
             }
-            Array.Copy(m_Data, row * Width, parts, 0, Width);
+            Array.Copy(m_Data, rowIndex * Width, rowValues, 0, Width);
+        }
+
+        public T[] GetRow(int rowIndex)
+        {
+            var result = new T[Width];
+            Array.Copy(m_Data, rowIndex * Width, result, 0, Width);
+            return result;
         }
 
         /// <summary>
         /// Copy one column in matrix into an array
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="parts"></param>
-        public void GetColumn(int column, T[] parts)
+        /// <param name="columnIndex"></param>
+        /// <param name="columnValues"></param>
+        public void GetColumn(int columnIndex, T[] columnValues)
         {
-            if (column < 0 || column >= Height)
+            if (columnIndex < 0 || columnIndex >= Width)
             {
-                throw new ArgumentOutOfRangeException("row");
+                throw new ArgumentOutOfRangeException("columnIndex");
             }
-            if (parts == null)
+            if (columnValues == null)
             {
-                throw new ArgumentNullException("parts");
+                throw new ArgumentNullException("columnValues");
             }
-            if (parts.Length != Height)
+            if (columnValues.Length != Height)
             {
-                throw new ArgumentException("Array size doesn't match rows count.", "parts");
+                throw new ArgumentException("Array size doesn't match rows count.", "columnValues");
             }
             int j = 0;
-            for(var i = column; i < m_Data.Length; i+=Width)
+            for(var i = columnIndex; i < m_Data.Length; i+=Width)
             {
-                parts[j++] = m_Data[i];
+                columnValues[j++] = m_Data[i];
+            }
+        }
+
+        /// <summary>
+        /// Set one column in matrix from an array
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <param name="columnValues"></param>
+        public void SetColumn(int columnIndex, T[] columnValues)
+        {
+            if (columnIndex < 0 || columnIndex >= Width)
+            {
+                throw new ArgumentOutOfRangeException("rowIndex");
+            }
+            if (columnValues == null)
+            {
+                throw new ArgumentNullException("columnValues");
+            }
+            if (columnValues.Length != Width)
+            {
+                throw new ArgumentException("Array size doesn't match rows count.", "columnValues");
+            }
+            int j = 0;
+            for (var i = columnIndex; i < m_Data.Length; i += Width)
+            {
+                m_Data[i] = columnValues[j++];
             }
         }
 

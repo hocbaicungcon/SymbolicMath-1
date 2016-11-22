@@ -9,11 +9,24 @@ namespace Barbar.SymbolicMath
     /// </summary>
     public abstract class Constant : SymMathNode, IComparable<Constant>
     {
+        private static IConstantFactory s_Factory;
+
         /// <summary>
         /// Default factory for constructing terms. Initial value is null.
         /// Set it to either TermInt64 or TermBigInteger
         /// </summary>
-        public static IConstantFactory Factory;
+        public static IConstantFactory Factory
+        {
+            get
+            {
+                if (s_Factory == null)
+                {
+                    throw new Exception("Factory is null. Please bootstrap the engine by setting the Factory to ConstantInt64.Factory (if you want to operate in long scope) or to ConstantBigInteger.Factory (if you want to operate in BigInteger scope)");
+                }
+                return s_Factory;
+            }
+            set { s_Factory = value; }
+        }
         /// <summary>
         /// Returns square root
         /// </summary>

@@ -146,6 +146,9 @@ namespace Barbar.SymbolicMath.Parser
 
         public SymMathNode DoParse(string term)
         {
+            // cleanup
+            term = term.Replace(" ", "");
+
             int termStart = -1;
             var startop = new Operation("$", 0, Associativity.None, false, null); /* Dummy operator to mark start */
             var lastop = startop;
