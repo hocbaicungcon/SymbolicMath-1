@@ -3,18 +3,16 @@
 namespace Barbar.SymbolicMath.Policies
 {
     /// <summary>
-    /// Implements policy for long type
-    /// </summary>
+    /// Implements numeric policy for <see cref="long"/> 
+    /// </summary>    
     public sealed class Int64Policy : IPolicy<long>
     {
+        /// <summary>
+        /// Singleton
+        /// </summary>
         public static readonly IPolicy<long> Instance = new Int64Policy();
 
-        /// <summary>
-        /// Calculates greatest common divisor
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public long Gcd(long a, long b)
         {
             if (a <= 0)
@@ -57,6 +55,7 @@ namespace Barbar.SymbolicMath.Policies
             return (1 << d) * a;
         }
 
+        /// <inheritdoc />
         public long Lcd(long a, long b)
         {
             long num1, num2;
@@ -79,63 +78,96 @@ namespace Barbar.SymbolicMath.Policies
             return num2;
         }
 
+        /// <inheritdoc />
         public bool IsOne(long a)
         {
             return a == 1;
         }
 
+        /// <inheritdoc />
         public bool IsZero(long a)
         {
             return a == 0;
         }
 
+        /// <inheritdoc />
         public long Div(long a, long b)
         {
             return a / b;
         }
 
+        /// <inheritdoc />
         public long Mul(long a, long b)
         {
             return a * b;
         }
 
+        /// <inheritdoc />
         public long Add(long a, long b)
         {
             return a + b;
         }
 
+        /// <inheritdoc />
         public long Sub(long a, long b)
         {
             return a - b;
         }
 
+        /// <inheritdoc />
         public bool IsBelowZero(long a)
         {
             return a < 0;
         }
 
+        /// <inheritdoc />
         public long Negate(long a)
         {
             return -a;
         }
+
+        /// <inheritdoc />
         public long Abs(long n)
         {
             return n < 0 ? -n : n;
         }
 
+        /// <inheritdoc />
         public long One()
         {
             return 1L;
         }
 
+        /// <inheritdoc />
         public long Zero()
         {
             return 0L;
         }
 
+        /// <inheritdoc />
         public long Sqrt(long n)
         {
             return (int)Math.Sqrt(n);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(long a, long b)
+        {
+            return a == b;
+        }
+
+        /// <inheritdoc />
+        public int Compare(long x, long y)
+        {
+            if (x > y)
+            {
+                return 1;
+            }
+            if (x < y)
+            {
+                return -1;
+            }
+            return 0;
         }
 
         /*BIGINT below:

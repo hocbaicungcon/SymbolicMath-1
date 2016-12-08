@@ -12,7 +12,11 @@ namespace Barbar.SymbolicMath.Rationals
     {
         private T m_Numerator;
         private T m_Denominator;
-        private static readonly TPolicy Policy = new TPolicy();
+
+        /// <summary>
+        /// Default singleton
+        /// </summary>
+        public static readonly IPolicy<T> Policy = new TPolicy();
 
         /// <summary>
         /// Numerator

@@ -1,17 +1,26 @@
 ﻿using Barbar.SymbolicMath.Policies;
 using Barbar.SymbolicMath.Rationals;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barbar.SymbolicMath.Vectors
 {
+    /// <summary>
+    /// Solve system of linear equations using gauss elimination method
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TPolicy"></typeparam>
     public class GaussElimination<T, TPolicy> where TPolicy : IPolicy<T>, new()
     {
-
-        public Rational<T, TPolicy>[] SolveLinearEquations(Matrix<Rational<T, TPolicy>> rows)
+        /// <summary>
+        /// Solve system of linear equations
+        /// </summary>
+        /// <param name="rows">
+        /// Matrix
+        /// M11*x + M12*y + M13*z = M14
+        /// M21*x + M22*y + M23*z = M24
+        /// M31*x + M32*y + M33*z = M34
+        /// </param>
+        /// <returns></returns>
+        public Rational<T, TPolicy>[] SolveLinearEquations(Matrix<Rational<T, TPolicy>, RationalPolicy<T, TPolicy>> rows)
         {
 
             for (int i = 0; i < rows.Height - 1; i++)
@@ -54,7 +63,7 @@ namespace Barbar.SymbolicMath.Vectors
             return CalculateResult(rows);
         }
 
-        private bool Swap(Matrix<Rational<T, TPolicy>> rows, int row, int column)
+        private bool Swap(Matrix<Rational<T, TPolicy>, RationalPolicy<T, TPolicy>> rows, int row, int column)
         {
             bool swapped = false;
             for (int z = rows.Height - 1; z > row; z--)
@@ -70,7 +79,7 @@ namespace Barbar.SymbolicMath.Vectors
 
             return swapped;
         }
-        private Rational<T, TPolicy>[] CalculateResult(Matrix<Rational<T, TPolicy>> rows)
+        private Rational<T, TPolicy>[] CalculateResult(Matrix<Rational<T, TPolicy>, RationalPolicy<T, TPolicy>> rows)
         {
             Rational<T, TPolicy> val;
             Rational<T, TPolicy>[] result = new Rational<T, TPolicy>[rows.Height];

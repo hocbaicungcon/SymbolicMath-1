@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Barbar.SymbolicMath.Policies;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Barbar.SymbolicMath.Vectors
 {
@@ -8,7 +10,8 @@ namespace Barbar.SymbolicMath.Vectors
     /// Represent matrix
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Matrix<T> : IEnumerable<T>
+    /// <typeparam name="TPolicy"></typeparam>
+    public class Matrix<T, TPolicy> : IEnumerable<T> where TPolicy : IPolicy<T>, new()
     {
         private T[] m_Data;
 
@@ -55,12 +58,51 @@ namespace Barbar.SymbolicMath.Vectors
         /// ctor, creates new instance of matrix based on source
         /// </summary>
         /// <param name="source"></param>
-        public Matrix(Matrix<T> source)
+        public Matrix(Matrix<T, TPolicy> source)
         {
             Width = source.Width;
             Height = source.Height;
             m_Data = new T[Width * Height];
             Array.Copy(source.m_Data, m_Data, m_Data.Length);
+        }
+
+        /// <summary>
+        /// Create matrix from 2 dimensional array
+        /// First dimension is row index, second dimension is column index
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Matrix<T, TPolicy> CreateMatrixRowIndexFirst(T[][] data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+
+            int height = data.Length;
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException("data", "data.Length");
+            }
+
+            int width = data[0].Length;
+            if (width <= 0)
+            {
+                throw new ArgumentOutOfRangeException("data", "data[0].Length");
+            }
+            var result = new Matrix<T, TPolicy>(width, height);
+            for (var y = 0; y < height; y++)
+            {
+                if (data[y].Length != width)
+                {
+                    throw new ArgumentException(string.Format("Invalid size - data[{0}].Length", y), "data");
+                }
+                for (var x = 0; x < width; x++)
+                {
+                    result[x, y] = data[y][x];
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -116,11 +158,34 @@ namespace Barbar.SymbolicMath.Vectors
             Array.Copy(m_Data, rowIndex * Width, rowValues, 0, Width);
         }
 
+        /// <summary>
+        /// Get clone of one row from matrix
+        /// </summary>
+        /// <param name="rowIndex"></param>
         public T[] GetRow(int rowIndex)
         {
             var result = new T[Width];
             Array.Copy(m_Data, rowIndex * Width, result, 0, Width);
             return result;
+        }
+
+        /// <summary>
+        /// Get one row from matrix in form of Vector
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        public Vector<T, TPolicy> GetRowVector(int rowIndex)
+        {
+            return new Vector<T, TPolicy>(GetRow(rowIndex), false);
+        }
+
+        /// <summary>
+        /// Copy vector to row values of given index
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="vector"></param>
+        public void SetRowVector(int rowIndex, Vector<T, TPolicy> vector)
+        {
+            SetRow(rowIndex, vector.Data);
         }
 
         /// <summary>
@@ -178,6 +243,26 @@ namespace Barbar.SymbolicMath.Vectors
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)m_Data).GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append("<table>");
+            for (var y = 0; y < Height; y++)
+            {
+                builder.Append("<tr>");
+                for (var x = 0; x < Width; x++)
+                {
+                    builder.Append("<td>");
+                    builder.Append(this[x, y]);
+                    builder.Append("</td>");
+                }
+                builder.Append("</tr>");
+            }
+            builder.Append("</table>");
+            return builder.ToString();
         }
     }
 }

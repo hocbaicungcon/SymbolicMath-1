@@ -4,6 +4,9 @@ using System.Xml;
 
 namespace Barbar.SymbolicMath
 {
+    /// <summary>
+    /// Represents A^B operation
+    /// </summary>
     public class Power : BinaryOperation
     {
         /// <summary>
@@ -15,11 +18,13 @@ namespace Barbar.SymbolicMath
         {
         }
 
+        /// <inheritdoc />
         public override double Evaluate()
         {
             return Math.Pow(A.Evaluate(), B.Evaluate());
         }
 
+        /// <inheritdoc />
         public override BinaryOperation Clone(SymMathNode a, SymMathNode b)
         {
             return new Power(a, b);

@@ -44,7 +44,33 @@
     <Compile Include="Equality.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ITransformationRule.cs" />
+    <Compile Include="Optimization\BaseOptimizer.cs" />
+    <Compile Include="Optimization\ConvergenceChecker.cs" />
+    <Compile Include="Optimization\GoalType.cs" />
+    <Compile Include="Optimization\IOptimizationData.cs" />
+    <Compile Include="Optimization\Linear\DimensionMismatchException.cs" />
+    <Compile Include="Optimization\Linear\LinearConstraint.cs" />
+    <Compile Include="Optimization\Linear\LinearConstraintSet.cs" />
+    <Compile Include="Optimization\Linear\LinearObjectiveFunction.cs" />
+    <Compile Include="Optimization\Linear\LinearOptimizer.cs" />
+    <Compile Include="Optimization\Linear\MaxCountExceededException.cs" />
+    <Compile Include="Optimization\Linear\NoFeasibleSolutionException.cs" />
+    <Compile Include="Optimization\Linear\NonNegativeConstraint.cs" />
+    <Compile Include="Optimization\Linear\PivotSelectionRule.cs" />
+    <Compile Include="Optimization\Linear\Relationship.cs" />
+    <Compile Include="Optimization\Linear\RelationshipExtensions.cs" />
+    <Compile Include="Optimization\Linear\SimplexSolver.cs" />
+    <Compile Include="Optimization\Linear\SimplexTableau.cs" />
+    <Compile Include="Optimization\Linear\SolutionCallback.cs" />
+    <Compile Include="Optimization\Linear\UnboundedSolutionException.cs" />
+    <Compile Include="Optimization\MaxEval.cs" />
+    <Compile Include="Optimization\MaxIter.cs" />
+    <Compile Include="Optimization\PointValuePair.cs" />
+    <Compile Include="Optimization\Utility\Incrementor.cs" />
+    <Compile Include="Optimization\Utility\Precision.cs" />
     <Compile Include="Policies\BigIntegerPolicy.cs" />
+    <Compile Include="Policies\DoublePolicy.cs" />
+    <Compile Include="Policies\RationalPolicy.cs" />
     <Compile Include="Rationals\RationalFactory.cs" />
     <Compile Include="SimplificationRules\DivisionCommonRule.cs" />
     <Compile Include="SimplificationRules\DivisionNByOneRule.cs" />
@@ -85,6 +111,7 @@
     <Compile Include="Variable.cs" />
     <Compile Include="Vectors\GaussElimination.cs" />
     <Compile Include="Vectors\Matrix.cs" />
+    <Compile Include="Vectors\Vector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

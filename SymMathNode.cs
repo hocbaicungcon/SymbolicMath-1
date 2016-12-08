@@ -52,6 +52,7 @@ namespace Barbar.SymbolicMath
         /// Dump node to MathML
         /// </summary>
         /// <param name="writer"></param>
+        /// <param name="parent"></param>
         public abstract void ToMathML(XmlWriter writer, SymMathNode parent);
 
         /// <summary>

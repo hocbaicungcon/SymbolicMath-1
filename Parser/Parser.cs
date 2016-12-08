@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Barbar.SymbolicMath.Parser
 {
+    /// <summary>
+    /// Simple parser - parses mathematical expressions
+    /// </summary>
     public class MathParser
     {
         private static readonly Operation[] s_Operations = new Operation[]
@@ -139,11 +141,21 @@ namespace Barbar.SymbolicMath.Parser
             return Constant.Factory.Create(result);
         }
 
+        /// <summary>
+        /// Parse mathematic expressions to <see cref="SymMathNode"/> tree
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
         public static SymMathNode Parse(string term)
         {
             return new MathParser().DoParse(term);
         }
 
+        /// <summary>
+        /// Parse mathematic expressions to <see cref="SymMathNode"/> tree
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
         public SymMathNode DoParse(string term)
         {
             // cleanup

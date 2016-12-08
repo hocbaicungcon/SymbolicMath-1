@@ -25,16 +25,19 @@ namespace Barbar.SymbolicMath
         {
         }
 
+        /// <inheritdoc />
         public override BinaryOperation Clone(SymMathNode a, SymMathNode b)
         {
             return new Equality(a, b);
         }
 
+        /// <inheritdoc />
         public bool IsTrue()
         {
             return A.Equals(B);
         }
 
+        /// <inheritdoc />
         public override double Evaluate()
         {
             throw new NotImplementedException();

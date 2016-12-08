@@ -7,6 +7,12 @@ namespace Barbar.SymbolicMath
     /// </summary>
     public abstract class TransformationRule<T> : ITransformationRule where T : SymMathNode
     {
+        /// <summary>
+        /// Get nodes different from node
+        /// </summary>
+        /// <typeparam name="TNode"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
         protected static IEnumerable<SymMathNode> GetDifferentNodes<TNode>(TNode node) where TNode : BinaryOperation
         {
             var stack = new Stack<TNode>();

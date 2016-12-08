@@ -185,6 +185,12 @@ namespace Barbar.SymbolicMath.Utilities
             return n >= lowerBound && n < upperBound;
         }
 
+        /// <summary>
+        /// Get permutations
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">Set for permutations</param>
+        /// <param name="perms">Array for results</param>
         public static void GetPermutations<T>(T[] list, ICollection<T[]> perms)
         {
             int x = list.Length - 1;

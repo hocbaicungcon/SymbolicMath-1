@@ -234,6 +234,7 @@ namespace Barbar.SymbolicMath
         /// Dump node to MathML
         /// </summary>
         /// <param name="writer"></param>
+        /// <param name="parent"></param>
         public override void ToMathML(XmlWriter writer, SymMathNode parent)
         {
             if (m_Value < 0)
