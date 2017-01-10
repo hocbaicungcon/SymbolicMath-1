@@ -124,6 +124,12 @@ namespace Barbar.SymbolicMath.Optimization.Linear
         }
 
         /// <inheritDoc/>
+        public override string ToString()
+        {
+            return string.Format("[count: {0}] {1} {2}", Coefficients.Count, Relationship, Value);
+        }
+
+        /// <inheritDoc/>
         public override int GetHashCode()
         {
             return Relationship.GetHashCode() ^ Value.GetHashCode() ^ Coefficients.GetHashCode();
